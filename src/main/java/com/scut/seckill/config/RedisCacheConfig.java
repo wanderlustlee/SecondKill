@@ -1,11 +1,11 @@
 package com.scut.seckill.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -13,7 +13,6 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author twc
  */
 @Configuration
-@Slf4j
 public class RedisCacheConfig {
 
     @Value("${spring.redis.host}")
@@ -40,8 +39,6 @@ public class RedisCacheConfig {
     @Value("${spring.redis.database}")
     private int database;
 
-    private Logger log;
-
     @Bean(name = "poolConfig")
     public JedisPoolConfig initJedisPoolConfig(){
         JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -57,6 +54,7 @@ public class RedisCacheConfig {
 
     @Bean
     public JedisPool initJedisPool(@Qualifier("poolConfig") JedisPoolConfig poolConfig){
+        System.out.println("jedispool初始化！");
         JedisPool jedisPool = new JedisPool(poolConfig,host,port,timeout);
         return jedisPool;
     }

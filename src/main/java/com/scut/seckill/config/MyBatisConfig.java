@@ -1,10 +1,12 @@
 package com.scut.seckill.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.support.http.StatViewServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -14,7 +16,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @Configuration
-@Slf4j
 public class MyBatisConfig {
 
     @Value("${spring.datasource.url}")
@@ -112,9 +113,11 @@ public class MyBatisConfig {
         return dataSource;
     }
 
+
     @Bean
     public SqlSessionFactoryBean initSqlSessionFactoryBean(@Qualifier("druidDataSource") DruidDataSource dataSource) throws IOException {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
+        System.out.println("druid初始化！");
         sessionFactoryBean.setDataSource(dataSource);
         sessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
         //添加XML目录

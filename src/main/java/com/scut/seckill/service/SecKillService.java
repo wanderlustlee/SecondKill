@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-@Slf4j
 @Service
 public class SecKillService {
 
@@ -155,7 +154,6 @@ public class SecKillService {
         Integer productId = (Integer)paramMap.get("productId");
         User user = secKillMapper.getUserById(userId);
         Product product = secKillMapper.getProductById(productId);
-        System.out.println(product.getProductName());
         String productStockCacheKey = product.getProductName()+"_stock";
         String hasBoughtSetKey = SecKillUtils.getRedisHasBoughtSetKey(product.getProductName());
 
@@ -163,7 +161,7 @@ public class SecKillService {
         jedis.watch(productStockCacheKey);
 
         //判断是否重复购买，注意这里高并发情形下并不安全
-        boolean isBuy = jedis.sismember(hasBoughtSetKey, user.getId().toString());
+        boolean isBuy = jedis.sismember(hasBoughtSetKey, user.getId().toString());//判断user.getId().toString()是不是hasBoughtSetKey集合中的元素
         if (isBuy){
             System.out.println("用户:"+user.getUsername()+"重复购买商品"+product.getProductName());
             throw new SecKillException(SecKillEnum.REPEAT);
@@ -197,6 +195,7 @@ public class SecKillService {
             //添加record到rabbitMQ消息队列
             rabbitMQSender.send(JSON.toJSONString(record));
             //返回秒杀成功
+            System.out.println("秒杀成功");
             return SecKillEnum.SUCCESS;
         } else {
             //重复秒杀
